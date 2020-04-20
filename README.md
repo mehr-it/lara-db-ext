@@ -7,11 +7,13 @@ This package implements various extensions and improvements for Laravel's databa
 Query builder macros:
 
 * updateWithJoinedData
+* generateChunked
 
 Eloquent builder macros:
 
 * insertModels
 * updateWithJoinedModels
+* generateChunked
 
 
 
@@ -112,6 +114,11 @@ contain all attributes you wish to update, a custom update field list can be spe
 third parameter.
 
 See method documentation for further details and parameters.
+
+
+## generateChunked() (query builder and eloquent)
+
+...to be done
 
 
 

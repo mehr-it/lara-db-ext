@@ -4,12 +4,15 @@
 	namespace MehrIt\LaraDbExt\Provider;
 
 
+	use Generator;
 	use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 	use Illuminate\Database\Eloquent\Model;
 	use Illuminate\Database\Query\Builder as QueryBuilder;
 	use Illuminate\Database\Query\Expression;
+	use MehrIt\LaraDbExt\Eloquent\GenerateChunked as GenerateChunkedEloquent;
 	use MehrIt\LaraDbExt\Eloquent\InsertModels;
 	use MehrIt\LaraDbExt\Eloquent\UpdateWithJoinedModels;
+	use MehrIt\LaraDbExt\Query\GenerateChunked as GenerateChunkedQuery;
 	use MehrIt\LaraDbExt\Query\UpdateWithJoinedData;
 
 	trait RegistersBuilderMacros
@@ -55,6 +58,22 @@
 				}
 			);
 
+			$this->registerMacro(
+				$cls,
+				'generateChunked',
+				/**
+				 * Returns a generator which queries results in chunks internally
+				 * @param int $queryChunkSize The query chunk size
+				 * @param callable|null $chunkProcessorCallback An optional callback to process each data chunk before yielding the items. The callback must return an iterable with the chunk items.
+				 * @return Generator The generator yielding all queried items
+				 */
+				function (int $queryChunkSize = 500, callable $chunkProcessorCallback = null) {
+
+					/** @noinspection PhpParamsInspection */
+					yield from (new GenerateChunkedQuery($this, $queryChunkSize, $chunkProcessorCallback))->execute();
+				}
+			);
+
 		}
 
 		/**
@@ -97,6 +116,22 @@
 
 					/** @noinspection PhpParamsInspection */
 					return (new UpdateWithJoinedModels($this, $models, $joinOn, $updateFields, $withTimestamps, $dataTableName))->execute();
+				}
+			);
+
+			$this->registerMacro(
+				$cls,
+				'generateChunked',
+				/**
+				 * Returns a generator which queries results in chunks internally
+				 * @param int $queryChunkSize The query chunk size
+				 * @param callable|null $chunkProcessorCallback An optional callback to process each data chunk before yielding the items. The callback must return an iterable with the chunk items.
+				 * @return Generator|Model[] The generator yielding all queried items
+				 */
+				function (int $queryChunkSize = 500, callable $chunkProcessorCallback = null) {
+
+					/** @noinspection PhpParamsInspection */
+					yield from (new GenerateChunkedEloquent($this, $queryChunkSize, $chunkProcessorCallback))->execute();
 				}
 			);
 		}

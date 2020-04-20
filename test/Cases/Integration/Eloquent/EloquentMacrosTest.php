@@ -277,4 +277,82 @@
 			]);
 
 		}
+
+		public function testGenerateChunked() {
+
+			DB::table('test_table')->insert([
+				'id'   => 1,
+				'name' => 'name a',
+				'x'    => 11
+			]);
+			DB::table('test_table')->insert([
+				'id'   => 2,
+				'name' => 'name b',
+				'x'    => 21
+			]);
+			DB::table('test_table')->insert([
+				'id'   => 3,
+				'name' => 'name c',
+				'x'    => 31
+			]);
+
+			$ret = iterator_to_array(TestModel::query()
+				->select('id', 'name', 'x')
+				->orderBy('id')
+				->generateChunked(2));
+
+			foreach($ret as $curr) {
+				$retData[] = $curr->toArray();
+			}
+
+			$this->assertContainsOnlyInstancesOf(TestModel::class, $ret);
+			$this->assertEquals([
+				['id' => 1, 'name' => 'name a', 'x' => 11],
+				['id' => 2, 'name' => 'name b', 'x' => 21],
+				['id' => 3, 'name' => 'name c', 'x' => 31],
+			], $retData);
+
+		}
+
+		public function testGenerateChunked_withCallback() {
+
+			DB::table('test_table')->insert([
+				'id'   => 1,
+				'name' => 'name a',
+				'x'    => 11
+			]);
+			DB::table('test_table')->insert([
+				'id'   => 2,
+				'name' => 'name b',
+				'x'    => 21
+			]);
+			DB::table('test_table')->insert([
+				'id'   => 3,
+				'name' => 'name c',
+				'x'    => 31
+			]);
+
+			$ret = iterator_to_array(TestModel::query()
+				->select('id', 'name', 'x')
+				->orderBy('id')
+				->generateChunked(2, function ($results) {
+					foreach ($results as $curr) {
+						$curr->x += 100;
+					}
+
+					return $results;
+				}));
+
+			foreach($ret as $curr) {
+				$retData[] = $curr->toArray();
+			}
+
+			$this->assertContainsOnlyInstancesOf(TestModel::class, $ret);
+			$this->assertEquals([
+				['id' => 1, 'name' => 'name a', 'x' => 111],
+				['id' => 2, 'name' => 'name b', 'x' => 121],
+				['id' => 3, 'name' => 'name c', 'x' => 131],
+			], $retData);
+
+		}
 	}

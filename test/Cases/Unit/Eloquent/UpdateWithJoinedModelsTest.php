@@ -14,7 +14,6 @@
 	use Illuminate\Database\Query\Expression;
 	use Illuminate\Database\Query\Grammars\Grammar;
 	use Illuminate\Database\Query\Processors\Processor;
-	use Illuminate\Support\Arr;
 	use InvalidArgumentException;
 	use MehrIt\LaraDbExt\Eloquent\UpdateWithJoinedModels;
 	use MehrItLaraDbExtTest\Cases\TestCase;
@@ -25,7 +24,6 @@
 	use MehrItLaraDbExtTest\Model\TestModelWithoutTimestamps;
 	use MehrItLaraDbExtTest\Model\TestModelWithoutUpdatedAtField;
 	use PHPUnit\Framework\MockObject\MockObject;
-	use SebastianBergmann\Comparator\ComparisonFailure;
 
 	class UpdateWithJoinedModelsTest extends TestCase
 	{
@@ -40,8 +38,7 @@
 		protected function getBuilder(&$connectionInterface = null, $model = null) {
 			$grammar = new Grammar();
 
-			/** @var Processor|MockObject $processor */
-			$processor = $this->getMockBuilder(Processor::class)->getMock();
+			$processor = new Processor();
 
 			/** @var Connection|MockObject $connectionInterface */
 			$connectionInterface = $this->getMockBuilder(Connection::class)->disableOriginalConstructor()->getMock();

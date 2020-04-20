@@ -25,8 +25,7 @@
 		protected function getBuilder(&$connectionInterface = null) {
 			$grammar = new Grammar();
 
-			/** @var Processor|MockObject $processor */
-			$processor = $this->getMockBuilder(Processor::class)->getMock();
+			$processor = new Processor();
 
 			/** @var ConnectionInterface|MockObject $connectionInterface */
 			$connectionInterface = $this->getMockBuilder(ConnectionInterface::class)->getMock();

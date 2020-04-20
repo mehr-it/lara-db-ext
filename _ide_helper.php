@@ -10,6 +10,7 @@
 
 	namespace Illuminate\Database\Eloquent {
 
+		use Generator;
 		use Illuminate\Database\Query\Expression;
 
 		class Builder {
@@ -37,12 +38,22 @@
 			public function updateWithJoinedModels($models, array $joinOn = [], $updateFields = [], bool $withTimestamps = true, string $dataTableName = 'data') {
 
 			}
+
+			/**
+			 * Returns a generator which queries results in chunks internally
+			 * @param int $queryChunkSize The query chunk size
+			 * @param callable|null $chunkProcessorCallback An optional callback to process each data chunk before yielding the items. The callback must return an iterable with the chunk items.
+			 * @return Generator|Model[] The generator yielding all queried items
+			 */
+			public function generateChunked(int $queryChunkSize = 500, callable $chunkProcessorCallback = null) {
+
+			}
 		}
 	}
 
 	namespace Illuminate\Database\Query {
 
-		use Illuminate\Database\Query\Expression;
+		use Generator;
 
 		class Builder {
 
@@ -55,6 +66,16 @@
 			 * @return int The number of affected rows
 			 */
 			public function updateWithJoinedData($data, array $joinOn = ['id'], $updateFields = [], string $dataTableName = 'data') {
+
+			}
+
+			/**
+			 * Returns a generator which queries results in chunks internally
+			 * @param int $queryChunkSize The query chunk size
+			 * @param callable|null $chunkProcessorCallback An optional callback to process each data chunk before yielding the items. The callback must return an iterable with the chunk items.
+			 * @return Generator|\stdClass[] The generator yielding all queried items
+			 */
+			public function generateChunked (int $queryChunkSize = 500, callable $chunkProcessorCallback = null) {
 
 			}
 		}
