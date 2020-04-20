@@ -40,6 +40,9 @@
 			$connectionInterface
 				->method('getQueryGrammar')
 				->willReturn($grammar);
+			$connectionInterface
+				->method('query')
+				->willReturn(new QueryBuilder($connectionInterface, $grammar, $processor));
 
 			/** @var ConnectionResolverInterface|MockObject $resolver */
 			$resolver = $this->getMockBuilder(ConnectionResolverInterface::class)->getMock();
@@ -109,6 +112,7 @@
 					],
 					[]
 				);
+
 
 			$ret = (new GenerateChunked($builder, 2))->execute();
 
