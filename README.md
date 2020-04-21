@@ -118,7 +118,32 @@ See method documentation for further details and parameters.
 
 ## generateChunked() (query builder and eloquent)
 
-...to be done
+When processing a large amount of data, laravel's `chunked()` method is widely used. But it does not
+offer a simple way to pass the data on to another consumer. The `generateChunked()` method can 
+help here and is available for both, the eloquent and the query builder:
+
+    $generator = User::query()
+        ->where('active', true)
+        ->generateChunked();
+
+It will return a generator object, which queries data in chunks from the DB and outputs it one record 
+after another.
+
+By default, data is queried in chunks of 500 records. This can be changed with the first parameter.
+The second parameter accepts a callable, which is invoked for each chunk of data, right
+before outputting it:
+
+    $generator = User::query()
+            ->where('active', true)
+            ->generateChunked(100, function($records) {
+            
+                return $records->pluck('name');
+                                    
+            });
+            
+As shown above, the callback can transform the chunk data in any desired way and it's return value
+will be output by the generator. **The only restriction is that it must return an iterable**. It 
+can even filter out some records, which should not be outputted.
 
 
 
