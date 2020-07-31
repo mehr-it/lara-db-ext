@@ -205,11 +205,26 @@
 			if (!$cursor->valid())
 				return;
 
+			/** @var Connection $connection */
+			$connection = $this->getConnection();
+			$forceCase  = $connection->getConfig('forceAttributeCase');
+
 			$currPrefix = null;
 			$colCount   = $statement->columnCount();
 			for ($i = 0; $i < $colCount; ++$i) {
 
 				$colName = $statement->getColumnMeta($i)['name'];
+
+				// force correct attribute case
+				switch($forceCase) {
+					case 'lower':
+						$colName = Str::lower($colName);
+						break;
+					case 'upper':
+						$colName = Str::upper($colName);
+						break;
+				}
+
 
 				if ($colName === '__-__END_GROUP__-__') {
 					// end if column group, we reset the prefix and do not return a column name
