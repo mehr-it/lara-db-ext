@@ -7,12 +7,8 @@
 	use Illuminate\Database\Eloquent\Model;
 	use MehrIt\LaraDbExt\Model\DbExtensions;
 
-	class TestModelWithoutPrimaryKey extends Model
+	class Post extends Model
 	{
 		use DbExtensions;
-
-		protected $table = 'test_table';
-
-		protected $primaryKey = null;
 
 	}

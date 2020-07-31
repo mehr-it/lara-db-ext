@@ -2,18 +2,20 @@
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/mehr-it/lara-db-ext.svg?style=flat-square)](https://packagist.org/packages/mehr-it/lara-db-ext)
 [![Build Status](https://travis-ci.org/mehr-it/lara-db-ext.svg?branch=master)](https://travis-ci.org/mehr-it/lara-db-ext)
 
-This package implements various extensions and improvements for Laravel's database layer.
+This package implements various extensions and improvements for Laravel's database abstraction.
 
-Query builder macros:
+Query builder:
 
+* generateChunked
+* insertOnDuplicateKey
 * updateWithJoinedData
+
+Eloquent builder:
+
 * generateChunked
-
-Eloquent builder macros:
-
 * insertModels
+* insertModelsOnDuplicateKey
 * updateWithJoinedModels
-* generateChunked
 
 
 
@@ -148,3 +150,7 @@ can even filter out some records, which should not be outputted.
 
 
 
+### Credits
+
+Thanks to Jonas Staudenmeir and contributers of the staudenmeir/laravel-ct package, which the
+common table expression support is based on.

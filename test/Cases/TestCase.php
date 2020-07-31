@@ -5,13 +5,15 @@
 
 
 	use Carbon\Carbon;
+	use Illuminate\Database\Connection;
 	use Illuminate\Support\Arr;
-	use Illuminate\Support\Str;
 	use MehrIt\LaraDbExt\Provider\LaraDbExtServiceProvider;
 
 	class TestCase extends \Orchestra\Testbench\TestCase
 	{
 		use CreatesTestDatabase;
+
+		protected $connectionsToTransact = [null, 'adapt-timezone-connection'];
 
 		protected function cleanTables() {
 
@@ -30,7 +32,7 @@
 						return true;
 				}
 
-				$this->assertEquals($value, $expectedSql[0]);
+				$this->assertEquals($expectedSql[0], $value);
 
 				return false;
 			});
@@ -52,6 +54,13 @@
 			Carbon::setTestNow(null);
 
 			$this->cleanTables();
+
+			$this->withFactories(__DIR__ . '/../database/factories');
+
+			// register dummy driver
+			Connection::resolverFor('dummyMocked', function ($connection, $database, $prefix, $config) {
+				return new Connection($connection, $database, $prefix, $config);
+			});
 		}
 
 
@@ -73,5 +82,33 @@
 			return [
 				LaraDbExtServiceProvider::class,
 			];
+		}
+
+		/**
+		 * Define environment setup.
+		 *
+		 * @param \Illuminate\Foundation\Application $app
+		 * @return void
+		 */
+		protected function getEnvironmentSetUp($app) {
+
+			$app['config']->set('database.connections.dummyMocked', [
+				'driver'   => 'dummyMocked',
+				'database' => 'db',
+				'prefix'   => '',
+			]);
+
+			$app['config']->set('database.connections.dummyMockedPrefixed', [
+				'driver'   => 'dummyMocked',
+				'database' => 'db',
+				'prefix'   => 'myPfx_',
+			]);
+
+			// create testing connection with adapt_timezone
+			$defaultConnectionName    = config('database.default');
+			$config                   = config("database.connections.$defaultConnectionName");
+			$config['adapt_timezone'] = true;
+			config()->set("database.connections.adapt-timezone-connection", $config);
+
 		}
 	}
