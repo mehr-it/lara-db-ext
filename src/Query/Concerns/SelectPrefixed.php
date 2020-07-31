@@ -226,12 +226,12 @@
 				}
 
 
-				if ($colName === '__-__END_GROUP__-__') {
+				if (Str::upper($colName) === '__-__END_GROUP__-__') {
 					// end if column group, we reset the prefix and do not return a column name
 					$currPrefix = null;
 					$colName    = 0; // we set col name to (int)0, so we can easily delete it later on
 				}
-				elseif (Str::startsWith($colName, '__-__START_GROUP PREFIX=')) {
+				elseif (Str::startsWith(Str::upper($colName), '__-__START_GROUP PREFIX=')) {
 					// start of a column group, we extract the prefix and set if for all following columns
 					$beforePrefixPos = strpos($colName, '=');
 					$afterPrefixPos  = strrpos($colName, '__-__');
