@@ -4,15 +4,13 @@
 	namespace MehrIt\LaraDbExt\Model;
 
 
-	use MehrIt\LaraDbExt\Connection\AdaptsTimezone;
-
 	/**
 	 * Master trait to include all required traits
 	 * @package MehrIt\LaraDbExt\Model
 	 */
 	trait DbExtensions
 	{
-		use AdaptsTimezone;
+		use AdaptsAttributeTimezone;
 		use CreatesBuilders;
 		use CreatesRelatedFromAttributes;
 		use FieldExpressions;
