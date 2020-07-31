@@ -46,10 +46,11 @@
 		}
 
 		/**
-		 * @inheritDoc
+		 * Get a base query builder instance.
+		 * @return \MehrIt\LaraDbExt\Query\Builder|\Illuminate\Database\Query\Builder
 		 */
-		protected function prepareForYield($data) {
-			return $this->model->newFromBuilder($data);
+		public function toBase() {
+			return parent::toBase();
 		}
 
 
