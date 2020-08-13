@@ -28,6 +28,9 @@ Eloquent models:
 * static access to identifiers, such as table name
 * helper functions to create SQL queries using model fields
 
+Connection:
+* disable custom SQL mode options
+
 ## Installation
 
 To install via composer run:
