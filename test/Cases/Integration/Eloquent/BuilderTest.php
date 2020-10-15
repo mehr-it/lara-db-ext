@@ -192,6 +192,192 @@
 			$this->assertCount(2, $result);
 		}
 
+		public function testChunkedGenerateById() {
+
+			$m1 = factory(TestModel::class)->create();
+			$m2 = factory(TestModel::class)->create();
+			$m3 = factory(TestModel::class)->create();
+			$m4 = factory(TestModel::class)->create();
+
+
+			$ret = TestModel::query()
+				->from('test_table')
+				->generateChunkedById(2);
+
+
+			$this->assertInstanceOf(Generator::class, $ret);
+
+			$result = iterator_to_array($ret);
+			$this->assertContainsOnlyInstancesOf(TestModel::class, $result);
+
+			$this->assertEquals($m1->id, $result[0]->id);
+			$this->assertEquals($m2->id, $result[1]->id);
+			$this->assertEquals($m3->id, $result[2]->id);
+			$this->assertEquals($m4->id, $result[3]->id);
+
+			$this->assertCount(4, $result);
+		}
+
+		public function testChunkedGenerateById_withAlias() {
+
+			$m1 = factory(TestModel::class)->create();
+			$m2 = factory(TestModel::class)->create();
+			$m3 = factory(TestModel::class)->create();
+			$m4 = factory(TestModel::class)->create();
+
+
+			$ret = TestModel::query()
+				->select('id as test')
+				->from('test_table')
+				->generateChunkedById(2, 'id', 'test');
+
+
+			$this->assertInstanceOf(Generator::class, $ret);
+
+			$result = iterator_to_array($ret);
+			$this->assertContainsOnlyInstancesOf(TestModel::class, $result);
+
+			$this->assertEquals($m1->id, $result[0]->test);
+			$this->assertEquals($m2->id, $result[1]->test);
+			$this->assertEquals($m3->id, $result[2]->test);
+			$this->assertEquals($m4->id, $result[3]->test);
+
+			$this->assertCount(4, $result);
+		}
+
+		public function testChunkedGenerateById_withCustomColumn() {
+
+			$m1 = factory(TestModel::class)->create(['x' => 'd']);
+			$m2 = factory(TestModel::class)->create(['x' => 'c']);
+			$m3 = factory(TestModel::class)->create(['x' => 'b']);
+			$m4 = factory(TestModel::class)->create(['x' => 'a']);
+
+
+			$ret = TestModel::query()
+				->from('test_table')
+				->orderBy('x')
+				->generateChunkedById(2, 'x');
+
+
+			$this->assertInstanceOf(Generator::class, $ret);
+
+			$result = iterator_to_array($ret);
+			$this->assertContainsOnlyInstancesOf(TestModel::class, $result);
+
+			$this->assertEquals($m4->x, $result[0]->x);
+			$this->assertEquals($m3->x, $result[1]->x);
+			$this->assertEquals($m2->x, $result[2]->x);
+			$this->assertEquals($m1->x, $result[3]->x);
+
+			$this->assertCount(4, $result);
+		}
+
+		public function testChunkedGenerateById_notAllChunksFull() {
+
+			$m1 = factory(TestModel::class)->create();
+			$m2 = factory(TestModel::class)->create();
+			$m3 = factory(TestModel::class)->create();
+
+			$ret = TestModel::query()
+				->from('test_table')
+				->generateChunkedById(2);
+
+
+			$this->assertInstanceOf(Generator::class, $ret);
+
+
+			$result = iterator_to_array($ret);
+			$this->assertContainsOnlyInstancesOf(TestModel::class, $result);
+
+			$this->assertEquals($m1->id, $result[0]->id);
+			$this->assertEquals($m2->id, $result[1]->id);
+			$this->assertEquals($m3->id, $result[2]->id);
+
+			$this->assertCount(3, $result);
+
+		}
+
+		public function testChunkedGenerateById_emptyResult() {
+
+
+			$ret = TestModel::query()
+				->from('test_table')
+				->generateChunkedById(2);
+
+
+			$this->assertInstanceOf(Generator::class, $ret);
+
+			$result = iterator_to_array($ret);
+
+			$this->assertCount(0, $result);
+
+		}
+
+		public function testChunkedGenerateById_withCallback() {
+
+			$m1 = factory(TestModel::class)->create();
+			$m2 = factory(TestModel::class)->create();
+			$m3 = factory(TestModel::class)->create();
+			$m4 = factory(TestModel::class)->create();
+
+
+			$ret = TestModel::query()
+				->from('test_table')
+				->generateChunkedById(2, 'id', null, function ($chunk) {
+
+					$ret = [];
+
+					foreach ($chunk as $item) {
+						$ret[] = (object)[
+							'id' => 'A' . $item->id
+						];
+					}
+
+					return $ret;
+				});
+
+
+			$this->assertInstanceOf(Generator::class, $ret);
+
+			$result = iterator_to_array($ret);
+			$this->assertContainsOnlyInstancesOf(\stdClass::class, $result);
+
+			$this->assertEquals('A' . $m1->id, $result[0]->id);
+			$this->assertEquals('A' . $m2->id, $result[1]->id);
+			$this->assertEquals('A' . $m3->id, $result[2]->id);
+			$this->assertEquals('A' . $m4->id, $result[3]->id);
+
+			$this->assertCount(4, $result);
+		}
+
+		public function testChunkedGenerateById_withCallbackFiltering() {
+
+			$m1 = factory(TestModel::class)->create();
+			factory(TestModel::class)->create();
+			$m3 = factory(TestModel::class)->create();
+			factory(TestModel::class)->create();
+
+			$ret = TestModel::query()
+				->from('test_table')
+				->generateChunkedById(2, 'id', null, function ($chunk) {
+
+					return [
+						$chunk[0],
+					];
+				});
+
+
+			$this->assertInstanceOf(Generator::class, $ret);
+
+			$result = iterator_to_array($ret);
+			$this->assertContainsOnlyInstancesOf(TestModel::class, $result);
+
+			$this->assertEquals($m1->id, $result[0]->id);
+			$this->assertEquals($m3->id, $result[1]->id);
+
+			$this->assertCount(2, $result);
+		}
+
 		public function testBelongsTo() {
 			$parent = factory(TestModelEloquentBuilderBelongsBelongs::class)->create();
 

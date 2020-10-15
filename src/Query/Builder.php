@@ -9,6 +9,7 @@
 	use Illuminate\Database\Query\Processors\Processor;
 	use MehrIt\LaraDbExt\Query\Concerns\AutoDetectWhereIn;
 	use MehrIt\LaraDbExt\Query\Concerns\ChunkedGenerate;
+	use MehrIt\LaraDbExt\Query\Concerns\ChunkedGenerateById;
 	use MehrIt\LaraDbExt\Query\Concerns\CommonTableExpressions;
 	use MehrIt\LaraDbExt\Query\Concerns\InsertOnDuplicateKey;
 	use MehrIt\LaraDbExt\Query\Concerns\SelectPrefixed;
@@ -21,6 +22,7 @@
 	{
 		use AutoDetectWhereIn;
 		use ChunkedGenerate;
+		use ChunkedGenerateById;
 		use CommonTableExpressions;
 		use InsertOnDuplicateKey;
 		use SelectPrefixed;

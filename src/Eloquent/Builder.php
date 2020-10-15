@@ -5,6 +5,7 @@
 
 
 	use MehrIt\LaraDbExt\Eloquent\Concerns\ChunkedModelGenerate;
+	use MehrIt\LaraDbExt\Eloquent\Concerns\ChunkedModelGenerateById;
 	use MehrIt\LaraDbExt\Eloquent\Concerns\InsertModels;
 	use MehrIt\LaraDbExt\Eloquent\Concerns\InsertModelsOnDuplicateKey;
 	use MehrIt\LaraDbExt\Eloquent\Concerns\ModelData;
@@ -14,6 +15,7 @@
 	class Builder extends \Illuminate\Database\Eloquent\Builder
 	{
 		use ChunkedModelGenerate;
+		use ChunkedModelGenerateById;
 		use InsertModels;
 		use InsertModelsOnDuplicateKey;
 		use ModelData;
