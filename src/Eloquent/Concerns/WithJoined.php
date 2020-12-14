@@ -296,7 +296,7 @@
 			/** @var \MehrIt\LaraDbExt\Query\Builder $query */
 			$query = $this->query;
 
-			yield from $this->processWithJoinedResult($query->cursor());
+			yield from $this->processWithJoinedResult($query->cursor()->getIterator());
 		}
 
 		/**

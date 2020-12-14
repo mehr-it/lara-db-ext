@@ -8,7 +8,9 @@
 	use Generator;
 	use Illuminate\Database\Query\Expression;
 	use Illuminate\Foundation\Testing\DatabaseTransactions;
+	use Illuminate\Support\Arr;
 	use Illuminate\Support\Facades\DB;
+	use Illuminate\Support\LazyCollection;
 	use MehrIt\LaraDbExt\Query\Builder;
 	use MehrItLaraDbExtTest\Cases\TestCase;
 	use MehrItLaraDbExtTest\Model\Post;
@@ -699,5 +701,28 @@
 			$this->assertEquals([1], DB::table('posts')->pluck('user_id')->all());
 		}
 
+		public function testCursor() {
+
+			$m1 = factory(TestModel::class)->create();
+
+			$builder = $this->createBuilder();
+			$result  = $builder
+				->selectPrefixed('test_table.*', 'myPfx__')
+				->from('test_table')
+				->cursor();
+
+			$this->assertInstanceOf(LazyCollection::class, $result);
+
+			$result = iterator_to_array($result);
+
+			$this->assertEquals((object)[
+				'myPfx__id'         => $m1->id,
+				'myPfx__name'       => $m1->name,
+				'myPfx__x'          => $m1->x,
+				'myPfx__dt'         => $m1->dt,
+				'myPfx__created_at' => $m1->created_at,
+				'myPfx__updated_at' => $m1->updated_at,
+			], Arr::first($result));
+		}
 
 	}

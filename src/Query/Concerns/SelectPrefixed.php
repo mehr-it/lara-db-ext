@@ -8,6 +8,7 @@
 	use Illuminate\Database\Events\StatementPrepared;
 	use Illuminate\Database\Grammar;
 	use Illuminate\Database\Query\Expression;
+	use Illuminate\Support\LazyCollection;
 	use Illuminate\Support\Str;
 	use InvalidArgumentException;
 	use MehrIt\LaraDbExt\Query\QueryManager;
@@ -41,7 +42,9 @@
 				$this->columns = ['*'];
 			}
 
-			yield from $this->runSelectPrefixed();
+			return new LazyCollection(function () {
+				yield from $this->runSelectPrefixed();
+			});
 		}
 
 

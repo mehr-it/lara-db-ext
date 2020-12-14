@@ -7,6 +7,7 @@
 	use Generator;
 	use Illuminate\Database\Query\Builder;
 	use Illuminate\Foundation\Testing\DatabaseTransactions;
+	use Illuminate\Support\LazyCollection;
 	use MehrItLaraDbExtTest\Cases\TestCase;
 	use MehrItLaraDbExtTest\Model\Post;
 	use MehrItLaraDbExtTest\Model\TestModel;
@@ -27,6 +28,34 @@
 			TestModel::query()->delete();
 			Post::query()->delete();
 			User::query()->delete();
+		}
+
+
+		public function testCursor() {
+
+			$m1 = factory(TestModel::class)->create();
+			$m2 = factory(TestModel::class)->create();
+			$m3 = factory(TestModel::class)->create();
+			$m4 = factory(TestModel::class)->create();
+
+
+			$ret = TestModel::query()
+				->orderBy('id')
+				->cursor();
+
+
+			$this->assertInstanceOf(LazyCollection::class, $ret);
+
+			$result = iterator_to_array($ret);
+
+			$this->assertContainsOnlyInstancesOf(TestModel::class, $result);
+
+			$this->assertEquals($m1->id, $result[0]->id);
+			$this->assertEquals($m2->id, $result[1]->id);
+			$this->assertEquals($m3->id, $result[2]->id);
+			$this->assertEquals($m4->id, $result[3]->id);
+
+			$this->assertCount(4, $result);
 		}
 
 

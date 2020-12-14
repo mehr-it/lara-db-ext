@@ -4,6 +4,7 @@
 	namespace MehrIt\LaraDbExt\Eloquent;
 
 
+	use Illuminate\Support\LazyCollection;
 	use MehrIt\LaraDbExt\Eloquent\Concerns\ChunkedModelGenerate;
 	use MehrIt\LaraDbExt\Eloquent\Concerns\ChunkedModelGenerateById;
 	use MehrIt\LaraDbExt\Eloquent\Concerns\InsertModels;
@@ -44,7 +45,9 @@
 		 * @inheritDoc
 		 */
 		public function cursor() {
-			yield from ($this->hasModelsJoined() ? $this->cursorWithJoined([]) : parent::cursor());
+			return new LazyCollection(function() {
+				yield from ($this->hasModelsJoined() ? $this->cursorWithJoined([]) : parent::cursor());
+			});
 		}
 
 		/**
