@@ -155,6 +155,11 @@
 
 			foreach ($rowData as $alias => $value) {
 
+				// arrays cause unexpected behaviour without error when passed to 'addBinding()', so we check here
+				if (is_array($value))
+					throw new \InvalidArgumentException("Data fields must not contain arrays. Array given for \"{$alias}\".");
+
+
 				if ($value instanceof Expression) {
 					$query->selectSub($grammar->getValue($value), $alias);
 				}

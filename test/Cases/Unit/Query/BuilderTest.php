@@ -446,6 +446,103 @@
 			$builder->updateWithJoinedData($data, ['sku']);
 		}
 
+		public function testUpdateWithJoinedData_containsNullValues() {
+
+			$data = [
+				[
+					'sku' => 1,
+					'a'   => null,
+					'b'   => 2,
+				],
+				[
+					'sku' => 3,
+					'a' => null,
+					'b'   => 4,
+				]
+			];
+
+			/** @var ConnectionInterface|MockObject $connectionInterface */
+			$builder = $this->getBuilder($connectionInterface)
+				->from('tmp');
+
+			$expectedSql      = [
+				'update "tmp" inner join ((select (?) as "sku", (?) as "a", (?) as "b") union all (select (?) as "sku", (?) as "a", (?) as "b")) as "data" on "tmp"."sku" = "data"."sku" set "tmp"."a" = "data"."a", "tmp"."b" = "data"."b"',
+				'update "tmp" inner join (select (?) as "sku", (?) as "a", (?) as "b" union all select (?) as "sku", (?) as "a", (?) as "b") as "data" on "tmp"."sku" = "data"."sku" set "tmp"."a" = "data"."a", "tmp"."b" = "data"."b"',
+			];
+			$expectedBindings = [
+				1, null, 2, 3, null, 4
+			];
+
+			$connectionInterface
+				->expects($this->once())
+				->method('update')
+				->with(
+					$this->matchesExpectedSql($expectedSql),
+					$expectedBindings
+				);
+
+			$builder->updateWithJoinedData($data, ['sku']);
+		}
+
+		public function testUpdateWithJoinedData_containsArrays() {
+
+			$data = [
+				[
+					'sku' => 1,
+					'a'   => ['x' => 19],
+					'b'   => 2,
+				],
+				[
+					'sku' => 3,
+					'a' => ['x' => 18],
+					'b'   => 4,
+				]
+			];
+
+			/** @var ConnectionInterface|MockObject $connectionInterface */
+			$builder = $this->getBuilder($connectionInterface)
+				->from('tmp');
+
+
+			$connectionInterface
+				->expects($this->never())
+				->method('update');
+
+			$this->expectException(InvalidArgumentException::class);
+			$this->expectExceptionMessageMatches('/.*?Data fields must not contain arrays.*/');
+
+			$builder->updateWithJoinedData($data, ['sku']);
+		}
+
+		public function testUpdateWithJoinedData_containsEmptyArrays() {
+
+			$data = [
+				[
+					'sku' => 1,
+					'a'   => [],
+					'b'   => 2,
+				],
+				[
+					'sku' => 3,
+					'a' => [],
+					'b'   => 4,
+				]
+			];
+
+			/** @var ConnectionInterface|MockObject $connectionInterface */
+			$builder = $this->getBuilder($connectionInterface)
+				->from('tmp');
+
+			$connectionInterface
+				->expects($this->never())
+				->method('update');
+
+			$this->expectException(InvalidArgumentException::class);
+			$this->expectExceptionMessageMatches('/.*?Data fields must not contain arrays.*/');
+
+			$builder->updateWithJoinedData($data, ['sku']);
+		}
+
 		public function testUpdateWithJoinedData_joinWithCustomMapping() {
 
 			$data = [

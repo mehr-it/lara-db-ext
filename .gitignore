@@ -4,3 +4,4 @@ phpunit.xml
 composer.json
 /composer-test.json
 /composer-test.lock
+/auth.json

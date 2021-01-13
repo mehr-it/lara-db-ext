@@ -14,7 +14,21 @@
 	$output = [];
 	if (trim($testPackages)) {
 		echo "Requiring $testPackages\n";
-		copy(__DIR__ . '/composer.json', __DIR__ . '/composer-test.json');
+
+
+		$composerJson = json_decode(file_get_contents(__DIR__ . '/composer.json'), true);
+
+		$composerJson['repositories'] = [
+			[
+				'type' => 'vcs',
+				'url' => 'https://github.com/laravel/framework'
+			]
+		];
+		$composerJson['config']['preferred-install']['laravel/framework'] = 'source';
+
+		file_put_contents( __DIR__ . '/composer-test.json', json_encode($composerJson, JSON_PRETTY_PRINT));
+
+
 		exec("cd '" . __DIR__ . "' && export COMPOSER=\"composer-test.json\" && composer require --no-interaction --with-all-dependencies $testPackages && composer dump-autoload --no-interaction", $output, $returnVar);
 	}
 	else {
