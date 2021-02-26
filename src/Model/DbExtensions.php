@@ -16,4 +16,5 @@
 		use FieldExpressions;
 		use Identifiers;
 		use SerializeDateFormat;
+		use Modifications;
 	}
