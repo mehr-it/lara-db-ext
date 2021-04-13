@@ -1,6 +1,5 @@
 # Laravel DB extension
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/mehr-it/lara-db-ext.svg?style=flat-square)](https://packagist.org/packages/mehr-it/lara-db-ext)
-[![Build Status](https://travis-ci.org/mehr-it/lara-db-ext.svg?branch=master)](https://travis-ci.org/mehr-it/lara-db-ext)
 
 This package implements various extensions and improvements for Laravel's database abstraction.
 
@@ -27,6 +26,7 @@ Eloquent models:
 * allow to specify temporary custom date serialization format
 * static access to identifiers, such as table name
 * helper functions to create SQL queries using model fields
+* ignore changed order of key-value-pairs when detecting changes in JSON fields **(since v2.2)**
 
 Connection:
 * disable custom SQL mode options

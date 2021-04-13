@@ -17,4 +17,5 @@
 		use Identifiers;
 		use SerializeDateFormat;
 		use Modifications;
+		use ComparesJsonKeyValuePairs;
 	}
