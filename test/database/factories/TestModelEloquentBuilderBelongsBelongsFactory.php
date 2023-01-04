@@ -14,7 +14,7 @@
 			'belongs_table_id' => function () {
 				return factory(\MehrItLaraDbExtTest\Model\TestModelEloquentBuilderBelongs::class)->create()->id;
 			},
-			'b_name'        => $faker->name,
+			'b_name'        => $faker->name(),
 			'b_x'           => $faker->randomNumber(6)
 		];
 	});

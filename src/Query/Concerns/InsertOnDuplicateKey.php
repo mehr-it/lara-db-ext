@@ -21,6 +21,9 @@
 		 */
 		public function insertOnDuplicateKey($values, array $updateColumns = []) {
 
+			if (is_callable([$this, 'applyBeforeQueryCallbacks']))
+				$this->applyBeforeQueryCallbacks();
+			
 			if ($values instanceof Arrayable)
 				$values = $values->toArray();
 			elseif ($values instanceof Traversable)

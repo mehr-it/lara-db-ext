@@ -6,6 +6,7 @@
 
 	use Closure;
 	use Illuminate\Database\ConnectionInterface;
+	use Mockery\Exception\BadMethodCallException;
 
 	class ConnectionMockBase implements ConnectionInterface
 	{
@@ -237,7 +238,12 @@
 
 
 		public function getConfig($config) {
-			return null;
+			try {
+				return call_user_func_array([$this->base, __FUNCTION__], func_get_args());
+			}
+			catch(BadMethodCallException $ex) {
+				
+			}
 		}
 
 	}
